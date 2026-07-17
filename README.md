@@ -6,24 +6,24 @@ To reproduce the analyses, scripts must be run in the following order:
 
 Note on format: The analysis scripts are written as annotated R scripts designed to be compiled using `knitr::spin()`.
 
-### Data File
-*   **`data.xlsx`**: Raw data frame used in all analyses.
+### Data file
+*   **`data.xlsx`**: Raw data file used in all analyses.
 
-    *   `replicate`: Unique identifier of the experimental replicate.
-    *   `id`: Unique identifier of the individual Hydra.
-    *   `parent`: Identifier of the parent Hydra (for maternal/genetic lineage tracking).
-    *   `date_birth`: Birth date of the Hydra.
+    *   `replicate`: Id of the replicate.
+    *   `id`: Id of the hydra.
+    *   `parent`: Id of the parent
+    *   `date_birth`: Birth date of the hydra.
     *   `treatment`: Experimental group ("Control" or "Sleep deprivation").
-    *   `lineage`: Genetic lineage of the Hydra.
-    *   `date_tumor`: First date when a tumor was observed (or `NA` if healthy).
-    *   `date_death`: Death date of the Hydra (or `NA` if censored).
-    *   `date_FB`: Date when the first bud was detached/produced.
+    *   `lineage`: Lineage of the hydra.
+    *   `date_tumor`: First date when a tumor was observed (or NA if healthy).
+    *   `date_death`: Death date of the hydra (or NA if alive during the experimental period).
+    *   `date_FB`: Date when the first bud was produced.
     *   `buds_1` to `buds_6`: Weekly total number of buds produced asexually (weeks 1 to 6).
     *   `tenta_1` to `tenta_6`: Weekly tentacle count (weeks 1 to 6).
 
 ### Setup scripts
 
-*   **`packages.R`**: Loads and installs all R libraries required for the project.
+*   **`packages.R`**: Loads all R libraries required for the analyses.
 *   **`script_data.R`**: Imports the raw Excel dataset, handles data cleaning, formatting, and variable transformations.
 *   **`functions.R`**: Custom utility functions (specifically `plot_cox_snell_survregme` to evaluate goodness-of-fit of parametric survival models).
 
