@@ -2,7 +2,7 @@ This repository contains the raw dataset and the codes used to perform the analy
 Meliani J, Asselin K, Berriahi Z, Renard J, Tökölyi J, M. Nedelcu A, Hamede R, Ujvari B, Thomas F, M. Dujon A. 2026 Sleep loss modulates tumor susceptibility and growth in Hydra. AAAAAA (doi:)
 
 To reproduce the analyses, scripts must be run in the following order:
-`packages.R` $\rightarrow$ `script_data.R` $\rightarrow$ `functions.R` $\rightarrow$ [any analysis script]
+`packages.R` $\rightarrow$ `script_data.R` $\rightarrow$ `functions.R` $\rightarrow$ any analysis script
 
 Note on format: The analysis scripts are written as annotated R scripts designed to be compiled using `knitr::spin()`.
 
