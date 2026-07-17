@@ -6,7 +6,6 @@ To reproduce the analyses, scripts must be run in the following order:
 
 The scripts are written as annotated R scripts designed to be compiled using `knitr::spin()`.
 
-### Data file
 *   **`data.xlsx`**: Raw data file used in all analyses.
 
     *   `replicate`: Id of the replicate.
