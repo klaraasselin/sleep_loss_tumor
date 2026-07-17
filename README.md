@@ -22,9 +22,9 @@ The scripts are written as annotated R scripts designed to be compiled using `kn
 
 ### Setup scripts
 
-*   **`packages.R`**: Loads all R libraries required for the analyses.
-*   **`script_data.R`**: Imports the raw Excel dataset, handles data cleaning, formatting, and variable transformations.
-*   **`functions.R`**: Custom functions to evaluate goodness-of-fit of survival models.
+*   **`0a_packages.R`**: Loads all R libraries required for the analyses.
+*   **`0b_script_data.R`**: Imports the raw Excel dataset, handles data cleaning, formatting, and variable transformations.
+*   **`0c_functions.R`**: Custom functions to evaluate goodness-of-fit of survival models.
 
 ### Analysis scripts
 
