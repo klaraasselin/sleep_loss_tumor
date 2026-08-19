@@ -1,6 +1,8 @@
 This repository contains the dataset and the codes used to perform the analyses in the following publication:
 Meliani J, Asselin K, Berriahi Z, Renard J, Tökölyi J, M. Nedelcu A, Hamede R, Ujvari B, Thomas F, M. Dujon A. 2026 Sleep loss modulates tumor susceptibility and growth in Hydra. AAAAAA (doi:)
 
+It also contains the output of the codes in PDF format. 
+
 To reproduce the analyses, scripts must be run in the following order:
 `packages.R` $\rightarrow$ `script_data.R` $\rightarrow$ `functions.R` $\rightarrow$ any analysis script
 
@@ -33,3 +35,11 @@ The scripts are written as annotated R scripts designed to be compiled using `kn
 *   **`3_first_bud.R`**: Survival models focusing on the first bud produced asexually.
 *   **`4_bud_rate.R`**: Generalized linear mixed-effects models focusing on weekly budding rates.
 *   **`5_mortality.R`**: Computes mortality counts and cumulative proportions across treatments and lineages.
+
+### Code outputs
+
+*   **`1_tumoral_dynamics.pdf`**
+*   **`2_supernumerary_tentacles.pdf`**
+*   **`3_first_bud.pdf`**
+*   **`4_bud_rate.pdf`**
+*   **`5_mortality.pdf`**
