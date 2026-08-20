@@ -1,5 +1,5 @@
 This repository contains the dataset and the codes used to perform the analyses in the following publication:
-Meliani J, Asselin K, Berriahi Z, Renard J, Tökölyi J, M. Nedelcu A, Hamede R, Ujvari B, Thomas F, M. Dujon A. 2026 Sleep loss modulates tumor susceptibility and growth in Hydra. AAAAAA (doi:)
+Meliani J, Asselin K, Berriahi Z, Renard J, Tökölyi J, M. Nedelcu A, Hamede R, Ujvari B, Thomas F, M. Dujon A. 2026 Sleep loss modulates tumor susceptibility in Hydra. AAAAAA (doi:)
 
 It also contains the output of the codes in PDF format. 
 
