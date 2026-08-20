@@ -4,7 +4,7 @@ Meliani J, Asselin K, Berriahi Z, Renard J, Tökölyi J, M. Nedelcu A, Hamede R,
 It also contains the output of the codes in PDF format. 
 
 To reproduce the analyses, scripts must be run in the following order:
-`packages.R` $\rightarrow$ `script_data.R` $\rightarrow$ `functions.R` $\rightarrow$ any analysis script
+`0a_packages.R` $\rightarrow$ `0b_script_data.R` $\rightarrow$ `0c_functions.R` $\rightarrow$ any analysis script
 
 The scripts are written as annotated R scripts designed to be compiled using `knitr::spin()`.
 
