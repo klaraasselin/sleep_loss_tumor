@@ -23,7 +23,7 @@
 
 #+ include=FALSE, warning=FALSE, message=FALSE, results='hide'
 
-knitr::opts_knit$set(root.dir = "~/Library/Mobile Documents/com~apple~CloudDocs/Documents/these/travail/3_annexes/ix_sommeil/260715/")
+knitr::opts_knit$set(root.dir = "~/Library/Mobile Documents/com~apple~CloudDocs/Documents/these/travail/3_annexes/ix_sommeil/260820/")
 
 knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE, 
                       fig.width = 17, fig.height = 10)
@@ -513,15 +513,27 @@ print(FB_proportions_tum)
 scale_y <- scale_y_continuous(limits = c(0, 1), breaks = seq(0, 1, by = 0.25), 
                               labels = percent, position = "right")
 
-hide_y <- theme(axis.text.y = element_blank(), axis.ticks.y = element_blank())
+#' Fix to hide y-axis numbers, ticks, and titles on the right and left
+hide_y <- theme(axis.text.y.right = element_blank(), 
+                axis.ticks.y.right = element_blank(),
+                axis.title.y.right = element_blank(),
+                axis.text.y = element_blank(), 
+                axis.ticks.y = element_blank(),
+                axis.title.y = element_blank())
 
-show_y <- theme(axis.text.y = element_text(color = "black", size = 14), 
-                axis.ticks.y = element_line())
+#' Fix to show y-axis numbers and ticks on the right
+show_y <- theme(axis.text.y.right = element_text(color = "black", size = 14), 
+                axis.ticks.y.right = element_line(),
+                axis.text.y = element_blank(), 
+                axis.ticks.y = element_blank(),
+                axis.title.y = element_blank())
 
 #' Theme of x-axis, and its presence or absence on the plots.
 scale_x <- scale_x_continuous(limits = c(0, 6), breaks = seq(0, 6, by = 2))
 
-hide_x <- theme(axis.text.x = element_blank(), axis.ticks.x = element_blank())
+hide_x <- theme(axis.text.x = element_blank(), 
+                axis.ticks.x = element_blank(), 
+                axis.title.x = element_blank())
 
 show_x <- theme(axis.text.x = element_text(color = "black", size = 14), 
                 axis.ticks.x = element_line())
@@ -536,76 +548,69 @@ sleep_scale <- list(
   scale_color_manual(values = sleep_condition_colors, breaks = c("Control", "Sleep deprivation")),
   scale_fill_manual(values = sleep_condition_colors, breaks = c("Control", "Sleep deprivation")))
 
-#' Theme shared by panels A and C
+#' Theme shared by panels A, B, and C (angle = 90 for bottom-to-top reading)
 theme_common <- theme(
   axis.title.x = element_text(color = "black", size = 14, margin = margin(t = 10)),
-  axis.title.y.right = element_text(color = "black", size = 14, angle = 90, 
-                                    margin = margin(l = 15)),
+  axis.title.y.right = element_text(color = "black", size = 14, angle = 90, margin = margin(l = 15)),
   plot.margin = margin(l = 5, r = 5, t = 5, b = 5))
 
-#' Presence or absence of labels on the plots
-labs_shown  <- labs(x = "Time (weeks)", 
-                    y = "Cumulative incidence of\nfirst bud production", 
-                    title = NULL)
-
-labs_hidden <- labs(x = NULL, y = NULL, title = NULL)
+#' Specific label configurations for precise placement
+labs_base   <- labs(x = NULL, y = NULL, title = NULL)
+labs_x_only <- labs(x = "Time (weeks)", y = NULL, title = NULL)
+labs_y_only <- labs(x = NULL, y = "Cumulative incidence of\nfirst bud production", title = NULL)
+labs_xy     <- labs(x = "Time (weeks)", y = "Cumulative incidence of\nfirst bud production", title = NULL)
 
 #' ## Panel A: interaction between sleep condition and lineage
 
 #' ### HO_SPT
-
-#' Cumulative incidence of first bud production by sleep condition for the lineage HO_SPT.
 A1 <- cuminc(Surv(age_followup, factor(status_competing)) ~ sleep_condition, 
-               data = FB_df %>% filter(lineage == "HO_SPT") %>%
-                 mutate(sleep_condition = factor(sleep_condition, levels = c("Control", "Sleep deprivation")))) %>%
+             data = FB_df %>% filter(lineage == "HO_SPT") %>%
+               mutate(sleep_condition = factor(sleep_condition, levels = c("Control", "Sleep deprivation")))) %>%
   ggcuminc(outcome = "1") +
   add_confidence_interval() +
-  labs_hidden + theme_common + hide_y + scale_y + scale_x + sleep_scale +
-  theme_bw() +
+  labs_base + scale_y + scale_x + sleep_scale +
+  theme_bw() + theme_common + hide_y +
   theme(axis.text.x = element_text(color = "black", size = 14),
         legend.position = "none") +
   annotate("text", x = 5.8, y = 0.05, label = "HO_SPT",
            color = "black", fontface = "bold", size = 5, hjust = 1, vjust = 0)
 
 #' ### HO_VLN
-
-#' Same method as above, but for the lineage HO_VLN.
 A2 <- cuminc(Surv(age_followup, factor(status_competing)) ~ sleep_condition, 
-               data = FB_df %>% filter(lineage == "HO_VLN") %>%
-                 mutate(sleep_condition = factor(sleep_condition, levels = c("Control", "Sleep deprivation")))) %>%
+             data = FB_df %>% filter(lineage == "HO_VLN") %>%
+               mutate(sleep_condition = factor(sleep_condition, levels = c("Control", "Sleep deprivation")))) %>%
   ggcuminc(outcome = "1") +
   add_confidence_interval() +
-  labs_hidden + theme_common + hide_y + scale_y + scale_x + sleep_scale +
-  theme_bw() +
+  labs_x_only + scale_y + scale_x + sleep_scale +
+  theme_bw() + theme_common + hide_y +
   theme(axis.text.x = element_text(color = "black", size = 14),
         legend.position = "none") +
   annotate("text", x = 5.8, y = 0.05, label = "HO_VLN",
            color = "black", fontface = "bold", size = 5, hjust = 1, vjust = 0)
 
 #' ### HC_MT
-
-#' Same method as above, but for the lineage HC_MT.
 A3 <- cuminc(Surv(age_followup, factor(status_competing)) ~ sleep_condition, 
-               data = FB_df %>% filter(lineage == "HC_MT") %>%
-                 mutate(sleep_condition = factor(sleep_condition, levels = c("Control", "Sleep deprivation")))) %>%
+             data = FB_df %>% filter(lineage == "HC_MT") %>%
+               mutate(sleep_condition = factor(sleep_condition, levels = c("Control", "Sleep deprivation")))) %>%
   ggcuminc(outcome = "1") +
   add_confidence_interval() +
-  labs_shown + theme_common + show_y + scale_y + scale_x + sleep_scale +
-  theme_bw() +
+  labs_y_only + scale_y + scale_x + sleep_scale +
+  theme_bw() + theme_common + show_y +
   theme(axis.text.x = element_text(color = "black", size = 14),
         legend.position = "none") +
   annotate("text", x = 5.8, y = 0.05, label = "HC_MT",
            color = "black", fontface = "bold", size = 5, hjust = 1, vjust = 0)
 
-#' Extract legend from the plot A3 to use later on the full figure. 
+#' Extract legend from the plot A3
 shared_treatment_legend <- cowplot::get_legend(
-  A3 + theme(legend.position = "right",
-               legend.text = element_text(size = 13),
-               legend.title = element_text(size = 14, face = "bold")))
+  A3 + theme(legend.position = "bottom",
+             legend.direction = "horizontal",
+             legend.text = element_text(size = 13),
+             legend.title = element_text(size = 14, face = "bold")))
 
 #' Combine A1, A2, and A3 into panel "A"
 A <- (A1 + A2 + A3 + plot_layout(nrow = 1)) +
-  plot_annotation(title = "Interaction between sleep condition and lineage              ",
+  plot_annotation(title = "Interaction between sleep condition and lineage",
                   theme = theme(plot.title = element_text(hjust = 0.5, face = "bold", size = 16, margin = margin(b = 10))))
 
 #' ## Panel B: by tumoral state
@@ -614,100 +619,90 @@ A <- (A1 + A2 + A3 + plot_layout(nrow = 1)) +
 B <- cuminc(Surv(age_followup, factor(status_competing)) ~ tum_state_early, data = FB_df) %>%
   ggcuminc(outcome = "1") +
   add_confidence_interval() +
-  labs_shown + scale_y + tum_scale +
-  theme_bw() +
-  theme(axis.text = element_text(color = "black", size = 14),
-        axis.title.x = element_text(color = "black", size = 14, margin = margin(t = 10), hjust = 0.91),
-        axis.title.y.right = element_text(color = "black", size = 14, angle = 90, margin = margin(l = 15)),
-        plot.margin = margin(l = 5, r = 5, t = 5, b = 5),
+  labs_xy + scale_y + tum_scale + scale_x +
+  theme_bw() + theme_common + show_y +
+  theme(axis.text.x = element_text(color = "black", size = 14),
+        axis.text.y.right = element_text(color = "black", size = 14),
+        axis.ticks.y.right = element_line(),
         legend.position = "none") +
-  plot_annotation(title = "Tumoral state effect               ",
+  plot_annotation(title = "Tumoral state effect",
                   theme = theme(plot.title = element_text(hjust = 0.5, face = "bold", size = 16, margin = margin(b = 10))))
 
-#' Extract legend from this panel to use later on the full figure. 
+#' Extract legend from this panel
 shared_tumor_legend <- cowplot::get_legend(
-  B + theme(legend.position = "right",
-                      legend.text = element_text(size = 13),
-                      legend.title = element_text(size = 14, face = "bold")))
+  B + theme(legend.position = "bottom",
+            legend.direction = "horizontal",
+            legend.text = element_text(size = 13),
+            legend.title = element_text(size = 14, face = "bold")))
 
 #' ## Panel C: by lineage
 
 #' ### HO_MT
-
-#' Cumulative incidence of tumor onset for the lineage HO_MT.
 C1 <- cuminc(Surv(age_followup, factor(status_competing)) ~ 1, 
-               data = FB_df %>% filter(lineage == "HO_MT")) %>%
+             data = FB_df %>% filter(lineage == "HO_MT")) %>%
   ggcuminc(outcome = "1") +
   add_confidence_interval() +
-  labs_hidden + theme_common + hide_y + hide_x + scale_y + scale_x +
-  theme_bw() +
+  labs_base + scale_y + scale_x +
+  theme_bw() + theme_common + hide_y + hide_x +
   annotate("text", x = 5.8, y = 0.05, label = "HO_MT",
            color = "black", fontface = "bold", size = 5, hjust = 1, vjust = 0)
 
 #' ### HO_SPC
-
-#' Same method as above, but for the lineage HO_SPC.
 C2 <- cuminc(Surv(age_followup, factor(status_competing)) ~ 1, 
-               data = FB_df %>% filter(lineage == "HO_SPC")) %>%
+             data = FB_df %>% filter(lineage == "HO_SPC")) %>%
   ggcuminc(outcome = "1") +
   add_confidence_interval() +
-  labs_hidden + theme_common + hide_y + hide_x + scale_y + scale_x +
-  theme_bw() +
+  labs_base + scale_y + scale_x +
+  theme_bw() + theme_common + hide_y + hide_x +
   annotate("text", x = 5.8, y = 0.05, label = "HO_SPC",
            color = "black", fontface = "bold", size = 5, hjust = 1, vjust = 0)
 
 #' ### HO_SPT
-
-#' Same method as above, but for the lineage HO_SPT.
 C3 <- cuminc(Surv(age_followup, factor(status_competing)) ~ 1, 
-               data = FB_df %>% filter(lineage == "HO_SPT")) %>%
+             data = FB_df %>% filter(lineage == "HO_SPT")) %>%
   ggcuminc(outcome = "1") +
   add_confidence_interval() +
-  labs_hidden + theme_common + show_y + hide_x + scale_y + scale_x +
-  theme_bw() +
+  labs_base + scale_y + scale_x +
+  theme_bw() + theme_common + hide_y + hide_x + 
+  theme(axis.text.y.right = element_text(color = "black", size = 14), 
+        axis.ticks.y.right = element_line()) +
   annotate("text", x = 5.8, y = 0.05, label = "HO_SPT",
            color = "black", fontface = "bold", size = 5, hjust = 1, vjust = 0)
 
 #' ### HO_VLN
-
-#' Same method as above, but for the lineage HO_VLN.
 C4 <- cuminc(Surv(age_followup, factor(status_competing)) ~ 1, 
-               data = FB_df %>% filter(lineage == "HO_VLN")) %>%
+             data = FB_df %>% filter(lineage == "HO_VLN")) %>%
   ggcuminc(outcome = "1") +
   add_confidence_interval() +
-  labs_hidden + theme_common + hide_y + show_x + scale_y + scale_x +
-  theme_bw() +
+  labs_base + scale_y + scale_x +
+  theme_bw() + theme_common + hide_y + show_x +
   annotate("text", x = 5.8, y = 0.05, label = "HO_VLN",
            color = "black", fontface = "bold", size = 5, hjust = 1, vjust = 0)
 
 #' ### HC_MT
-
-#' Same method as above, but for the lineage HC_MT.
 C5 <- cuminc(Surv(age_followup, factor(status_competing)) ~ 1, 
-               data = FB_df %>% filter(lineage == "HC_MT")) %>%
+             data = FB_df %>% filter(lineage == "HC_MT")) %>%
   ggcuminc(outcome = "1") +
   add_confidence_interval() +
-  labs_hidden + theme_common + hide_y + show_x + scale_y + scale_x +
-  theme_bw() +
+  labs_x_only + scale_y + scale_x +
+  theme_bw() + theme_common + hide_y + show_x +
   annotate("text", x = 5.8, y = 0.05, label = "HC_MT",
            color = "black", fontface = "bold", size = 5, hjust = 1, vjust = 0)
 
 #' ### HV_GAL
-
-#' Same method as above, but for the lineage HV_GAL.
 C6 <- cuminc(Surv(age_followup, factor(status_competing)) ~ 1, 
-               data = FB_df %>% filter(lineage == "HV_GAL")) %>%
+             data = FB_df %>% filter(lineage == "HV_GAL")) %>%
   ggcuminc(outcome = "1") +
   add_confidence_interval() +
-  labs_shown + theme_common + show_y + show_x + scale_y + scale_x +
-  theme_bw() +
+  labs_y_only + scale_y + scale_x +
+  theme_bw() + theme_common + show_y + show_x +
   annotate("text", x = 5.8, y = 0.05, label = "HV_GAL",
            color = "black", fontface = "bold", size = 5, hjust = 1, vjust = 0)
 
 #' Create panel C combining plots C1 to C6.
 C <- (C1 + C2 + C3) / (C4 + C5 + C6) + 
   plot_layout(heights = c(1, 1)) +
-  plot_annotation(title = "Lineage effect               ",
+  plot_annotation(title = "Lineage effect",
                   theme = theme(plot.title = element_text(
                     hjust = 0.5, face = "bold", size = 16, margin = margin(b = 10))))
 
@@ -715,30 +710,28 @@ C <- (C1 + C2 + C3) / (C4 + C5 + C6) +
 
 #' Add a letter tag to the first sub-plot of each panel.
 A[[1]] <- A[[1]] + labs(tag = "A") + theme(plot.tag = element_text(size = 20, face = "bold"))
-B[[1]] <- B[[1]] + labs(tag = "B") + theme(plot.tag = element_text(size = 20, face = "bold"))
+B <- B + labs(tag = "B") + theme(plot.tag = element_text(size = 20, face = "bold"))
 C[[1]][[1]] <- C[[1]][[1]] + labs(tag = "C") + theme(plot.tag = element_text(size = 20, face = "bold"))
 
 #' Convert each panel into a graphical object.
 A <- patchwork::patchworkGrob(A)
-B <- patchwork::patchworkGrob(B)
+#' Wrap B in patchwork before conversion to force perfect axis alignment with A and C
+B <- patchwork::patchworkGrob(B + patchwork::plot_layout(ncol = 1)) 
 C <- patchwork::patchworkGrob(C)
 
-#' Align panels A, B, and C vertically.
-left_column <- cowplot::plot_grid(A, B, C, ncol = 1, align = "v", axis = "r", 
-                                  rel_heights = c(1, 1, 1.6))
-
-#' Shift shared legend to the right so they align with the plots they refer to.
-shared_treatment_legend_shifted <- cowplot::plot_grid(NULL, shared_treatment_legend, ncol = 2, rel_widths = c(3, 0.85))
-shared_tumor_legend_shifted <- cowplot::plot_grid(NULL, shared_tumor_legend, ncol = 2, rel_widths = c(0.15, 0.85))
-
-#' Place the legends on the right of the figure.
-right_column <- cowplot::plot_grid(shared_treatment_legend_shifted, 
-                                   shared_tumor_legend_shifted, NULL, 
-                                   ncol = 1, rel_heights = c(1, 1, 1.6))
-
-#' Combine the panels and the shared legend.
-final_FB_panel <- cowplot::plot_grid(left_column, right_column, ncol = 2, rel_widths = c(1, 0.14)) +
-  theme(plot.margin = margin(l = 5, r = 60, t = 5, b = 5))
+#' Combine panels and shared legends vertically into a single column, aligning axes.
+final_FB_panel <- cowplot::plot_grid(A, 
+                                     shared_treatment_legend, 
+                                     B, 
+                                     shared_tumor_legend, 
+                                     C, 
+                                     ncol = 1, 
+                                     align = "v",
+                                     axis = "lr",
+                                     rel_heights = c(1, 0.1, 1, 0.1, 1.8)) +
+  theme(plot.margin = margin(l = 5, r = 5, t = 5, b = 5))
 
 #' Show the final figure.
 print(final_FB_panel)
+
+ggsave("figure_3.png", plot = final_FB_panel, width = 21, height = 29.7, units = "cm", dpi = 300)

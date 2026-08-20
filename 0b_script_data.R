@@ -3,7 +3,7 @@
 df <- 
   
   #' Import the excel file
-  read_excel("~/Library/Mobile Documents/com~apple~CloudDocs/Documents/these/travail/3_annexes/ix_sommeil/260715/data.xlsx", 
+  read_excel("~/Library/Mobile Documents/com~apple~CloudDocs/Documents/these/travail/3_annexes/ix_sommeil/260820/data.xlsx", 
              col_types = c("numeric", "numeric", "numeric", "date", "text", 
                            "text", "date", "date", "date", "numeric", "numeric",
                            "numeric", "numeric", "numeric", "numeric", "numeric",

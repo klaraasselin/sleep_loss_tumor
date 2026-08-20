@@ -23,7 +23,7 @@
 
 #+ include=FALSE, warning=FALSE, message=FALSE, results='hide'
 
-knitr::opts_knit$set(root.dir = "~/Library/Mobile Documents/com~apple~CloudDocs/Documents/these/travail/3_annexes/ix_sommeil/260715/")
+knitr::opts_knit$set(root.dir = "~/Library/Mobile Documents/com~apple~CloudDocs/Documents/these/travail/3_annexes/ix_sommeil/260820/")
 
 knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE, 
                       fig.width = 17, fig.height = 10)
@@ -420,10 +420,20 @@ print(tum_proportions_interaction)
 scale_y <- scale_y_continuous(limits = c(0, 1), breaks = seq(0, 1, by = 0.25), 
                               labels = percent, position = "right")
 
-hide_y <- theme(axis.text.y = element_blank(), axis.ticks.y = element_blank())
+#' Fix to hide y-axis numbers, ticks, and titles on the right and left
+hide_y <- theme(axis.text.y.right = element_blank(), 
+                axis.ticks.y.right = element_blank(),
+                axis.title.y.right = element_blank(),
+                axis.text.y = element_blank(), 
+                axis.ticks.y = element_blank(),
+                axis.title.y = element_blank())
 
-show_y <- theme(axis.text.y = element_text(color = "black", size = 14), 
-                axis.ticks.y = element_line())
+#' Fix to show y-axis numbers and ticks on the right
+show_y <- theme(axis.text.y.right = element_text(color = "black", size = 14), 
+                axis.ticks.y.right = element_line(),
+                axis.text.y = element_blank(), 
+                axis.ticks.y = element_blank(),
+                axis.title.y = element_blank())
 
 #' Theme of x-axis
 scale_x <- scale_x_continuous(limits = c(0, 6), breaks = seq(0, 6, by = 2))
@@ -433,19 +443,18 @@ sleep_scale <- list(
   scale_color_manual(values = sleep_condition_colors, breaks = c("Control", "Sleep deprivation")),
   scale_fill_manual(values = sleep_condition_colors, breaks = c("Control", "Sleep deprivation")))
 
-#' Theme shared by panels B and C
-theme_B_C <- theme(
+#' Theme shared by all panels (angle = 90 for bottom-to-top reading)
+theme_common <- theme(
   axis.text.x = element_text(color = "black", size = 14),
   axis.title.x = element_text(color = "black", size = 14, margin = margin(t = 10)),
   axis.title.y.right = element_text(color = "black", size = 14, angle = 90, margin = margin(l = 15)),
   plot.margin = margin(l = 5, r = 5, t = 5, b = 5))
 
-#' Presence or absence of labels on the plots
-labs_shown  <- labs(x = "Time (weeks)", 
-                    y = "Cumulative incidence\nof tumor development", 
-                    title = NULL)
-
-labs_hidden <- labs(x = NULL, y = NULL, title = NULL)
+#' Specific label configurations for precise placement
+labs_base   <- labs(x = NULL, y = NULL, title = NULL)
+labs_x_only <- labs(x = "Time (weeks)", y = NULL, title = NULL)
+labs_y_only <- labs(x = NULL, y = "Cumulative incidence\nof tumor development", title = NULL)
+labs_xy     <- labs(x = "Time (weeks)", y = "Cumulative incidence\nof tumor development", title = NULL)
 
 #' ## Panel A: by sleep condition
 
@@ -454,18 +463,19 @@ A <- cuminc(Surv(age_followup, factor(status_competing)) ~ sleep_condition,
             data = tum_df) %>%
   ggcuminc(outcome = "1") +
   add_confidence_interval() +
-  labs_shown + scale_y + sleep_scale +
-  theme_bw() +
-  theme(axis.text = element_text(color = "black", size = 14),
-        axis.title.x = element_text(
-          color = "black", size = 14, margin = margin(t = 10), hjust = 0.91),
-        axis.title.y.right = element_text(
-          color = "black", size = 14, angle = 90, margin = margin(l = 15)),
-        plot.margin = margin(l = 5, r = 5, t = 5, b = 5),
-        legend.position = "none") +
-  plot_annotation(title = "Sleep condition effect                 ",
+  labs_xy + scale_y + sleep_scale + scale_x +
+  theme_bw() + theme_common + show_y +
+  theme(legend.position = "none") +
+  plot_annotation(title = "Sleep condition effect",
                   theme = theme(plot.title = element_text(
                     hjust = 0.5, face = "bold", size = 16, margin = margin(b = 10))))
+
+#' Extract legend from plot A to use later on the full figure.
+shared_legend <- cowplot::get_legend(
+  A + theme(legend.position = "bottom",
+            legend.direction = "horizontal",
+            legend.text = element_text(size = 13),
+            legend.title = element_text(size = 14, face = "bold")))
 
 #' ## Panel B: by sleep condition for each lineage
 
@@ -476,8 +486,8 @@ B1 <- cuminc(Surv(age_followup, factor(status_competing)) ~ sleep_condition,
              data = tum_df %>% filter(lineage == "HO_MT")) %>%
   ggcuminc(outcome = "1") +
   add_confidence_interval() +
-  labs_hidden + theme_B_C + hide_y + scale_y + scale_x + sleep_scale +
-  theme_bw() +
+  labs_base + scale_y + scale_x + sleep_scale +
+  theme_bw() + theme_common + hide_y +
   theme(legend.position = "none") +
   annotate("text", x = 0.2, y = 0.95, label = "HO_MT",
            color = "black", fontface = "bold", size = 5, hjust = 0, vjust = 1)
@@ -489,8 +499,8 @@ B2 <- cuminc(Surv(age_followup, factor(status_competing)) ~ sleep_condition,
              data = tum_df %>% filter(lineage == "HO_SPC")) %>%
   ggcuminc(outcome = "1") +
   add_confidence_interval() +
-  labs_hidden + theme_B_C + hide_y + scale_y + scale_x + sleep_scale + 
-  theme_bw() +
+  labs_x_only + scale_y + scale_x + sleep_scale + 
+  theme_bw() + theme_common + hide_y +
   theme(legend.position = "none") +
   annotate("text", x = 0.2, y = 0.95, label = "HO_SPC",
            color = "black", fontface = "bold", size = 5, hjust = 0, vjust = 1)
@@ -502,21 +512,15 @@ B3 <- cuminc(Surv(age_followup, factor(status_competing)) ~ sleep_condition,
              data = tum_df %>% filter(lineage == "HO_SPT")) %>%
   ggcuminc(outcome = "1") +
   add_confidence_interval() +
-  labs_shown + theme_B_C + show_y + scale_y + scale_x + sleep_scale +
-  theme_bw() +
+  labs_y_only + scale_y + scale_x + sleep_scale +
+  theme_bw() + theme_common + show_y +
   theme(legend.position = "none") +
   annotate("text", x = 0.2, y = 0.95, label = "HO_SPT",
            color = "black", fontface = "bold", size = 5, hjust = 0, vjust = 1)
 
-#' Extract legend from the plot B3 to use later on the full figure. 
-shared_legend <- cowplot::get_legend(
-  B3 + theme(legend.position = "right",
-             legend.text = element_text(size = 13),
-             legend.title = element_text(size = 14, face = "bold")))
-
 #' Create panel B combining plots B1, B2, and B3
 B <- (B1 + B2 + B3 + plot_layout(nrow = 1)) +
-  plot_annotation(title = "Interaction between sleep condition and lineage              ",
+  plot_annotation(title = "Interaction between sleep condition and lineage",
                   theme = theme(plot.title = element_text(hjust = 0.5, face = "bold", 
                                                           size = 16, margin = margin(b = 10))))
 
@@ -529,8 +533,8 @@ C1 <- cuminc(Surv(age_followup, factor(status_competing)) ~ 1,
              data = tum_df %>% filter(lineage == "HO_MT")) %>%
   ggcuminc(outcome = "1") +
   add_confidence_interval() +
-  labs_hidden + theme_B_C + hide_y + scale_y + scale_x +
-  theme_bw() +
+  labs_base + scale_y + scale_x +
+  theme_bw() + theme_common + hide_y +
   annotate("text", x = 0.2, y = 0.95, label = "HO_MT",
            color = "black", fontface = "bold", size = 5, hjust = 0, vjust = 1)
 
@@ -538,11 +542,11 @@ C1 <- cuminc(Surv(age_followup, factor(status_competing)) ~ 1,
 
 #' Same method as above, but for the lineage HO_SPC.
 C2 <- cuminc(Surv(age_followup, factor(status_competing)) ~ 1, 
-               data = tum_df %>% filter(lineage == "HO_SPC")) %>%
+             data = tum_df %>% filter(lineage == "HO_SPC")) %>%
   ggcuminc(outcome = "1") +
   add_confidence_interval() +
-  labs_hidden + theme_B_C + hide_y + scale_y + scale_x +
-  theme_bw() +
+  labs_x_only + scale_y + scale_x +
+  theme_bw() + theme_common + hide_y +
   annotate("text", x = 0.2, y = 0.95, label = "HO_SPC",
            color = "black", fontface = "bold", size = 5, hjust = 0, vjust = 1)
 
@@ -550,48 +554,46 @@ C2 <- cuminc(Surv(age_followup, factor(status_competing)) ~ 1,
 
 #' Same method as above, but for the lineage HO_SPT.
 C3 <- cuminc(Surv(age_followup, factor(status_competing)) ~ 1, 
-               data = tum_df %>% filter(lineage == "HO_SPT")) %>%
+             data = tum_df %>% filter(lineage == "HO_SPT")) %>%
   ggcuminc(outcome = "1") +
   add_confidence_interval() +
-  labs_shown + theme_B_C + show_y + scale_y + scale_x +
-  theme_bw() +
+  labs_y_only + scale_y + scale_x +
+  theme_bw() + theme_common + show_y +
   annotate("text", x = 0.2, y = 0.95, label = "HO_SPT",
            color = "black", fontface = "bold", size = 5, hjust = 0, vjust = 1)
 
 #' Create panel C combining plots C1, C2, and C3
 C <- (C1 + C2 + C3 + plot_layout(nrow = 1)) +
-  plot_annotation(title = "Lineage effect               ",
+  plot_annotation(title = "Lineage effect",
                   theme = theme(plot.title = element_text(
                     hjust = 0.5, face = "bold", size = 16, margin = margin(b = 10))))
 
 #' ## Assembly
 
-#' Add a letter tag (A/B/C) to the first sub-plot of each panel, so
-#' the final figure has labels for each panel on their left.
+#' Add a letter tag (A/B/C) to the first sub-plot of each panel.
 A <- A + labs(tag = "A") + theme(plot.tag = element_text(size = 20, face = "bold"))
 B[[1]] <- B[[1]] + labs(tag = "B") + theme(plot.tag = element_text(size = 20, face = "bold"))
 C[[1]] <- C[[1]] + labs(tag = "C") + theme(plot.tag = element_text(size = 20, face = "bold"))
 
 #' Convert each panel into a graphical object.
-A <- patchwork::patchworkGrob(A)
+#' (Wrapping A in patchwork to force perfect alignment with the B and C grids).
+A <- patchwork::patchworkGrob(A + patchwork::plot_layout(ncol = 1))
 B <- patchwork::patchworkGrob(B)
 C <- patchwork::patchworkGrob(C)
 
-#' Align panels A, B, and C vertically.
-left_column <- cowplot::plot_grid(A, B, C, ncol = 1, align = "v", axis = "r", 
-                                  rel_heights = c(1, 1, 1))
-
-#' Draw the shared legend (extracted earlier).
-legend <- cowplot::ggdraw() +
-  cowplot::draw_grob(shared_legend, x = 0.5, y = 0.35,
-                     width = 0.5, height = 0.3)
-
-#' Place the legend on the right of the figure.
-right_column <- cowplot::plot_grid(legend, NULL, NULL, ncol = 1, rel_heights = c(1, 3, 1))
-
-#' Combine the panels and the shared legend.
-final_figure <- cowplot::plot_grid(left_column, right_column, ncol = 2, rel_widths = c(1, 0.2)) +
-  theme(plot.margin = margin(l = 5, r = 60, t = 5, b = 5))
+#' Combine the panels and the shared legend vertically.
+#' The legend is placed between B and C.
+final_tum_panel <- cowplot::plot_grid(A, 
+                                   B, 
+                                   shared_legend, 
+                                   C, 
+                                   ncol = 1, 
+                                   align = "v", 
+                                   axis = "lr", 
+                                   rel_heights = c(1, 1, 0.1, 1)) +
+  theme(plot.margin = margin(l = 5, r = 5, t = 5, b = 5))
 
 #' Show the final figure.
-print(final_figure)
+print(final_tum_panel)
+
+ggsave("figure_2.png", plot = final_tum_panel, width = 21, height = 29.7, units = "cm", dpi = 300)
